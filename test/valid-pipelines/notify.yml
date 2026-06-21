@@ -124,6 +124,20 @@ steps:
           output:
             title: "Test Results"
             summary: "All tests passed"
+            text: "**All tests passed!**"
+            annotations:
+              - path: "src/main.js"
+                start_line: 15
+                end_line: 15
+                annotation_level: "warning"
+                message: "Missing semicolon"
+              - path: "src/main.js"
+                start_line: 20
+                end_line: 20
+                start_column: 5
+                end_column: 10
+                annotation_level: "failure"
+                message: "Undefined variable"
       - github_check:
           name: "My Custom Check"
         if: "build.state == 'failed'"
