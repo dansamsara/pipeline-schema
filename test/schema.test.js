@@ -199,6 +199,101 @@ describe("schema.json", function() {
     expect(v(pipeline)).to.eql(true);
   });
 
+  it("should reject a github_check with an unknown property", function() {
+    const ajv = new Ajv({ allErrors: true });
+    const v = ajv.compile(schema);
+    const pipeline = {
+      steps: [
+        { command: "echo hello" }
+      ],
+      notify: [
+        { github_check: { foo: "bar" } }
+      ]
+    };
+    expect(v(pipeline)).to.eql(false);
+  });
+
+  it("should reject a github_check output with an unknown property", function() {
+    const ajv = new Ajv({ allErrors: true });
+    const v = ajv.compile(schema);
+    const pipeline = {
+      steps: [
+        { command: "echo hello" }
+      ],
+      notify: [
+        { github_check: { output: { bogus_field: "x" } } }
+      ]
+    };
+    expect(v(pipeline)).to.eql(false);
+  });
+
+  it("should reject a github_check annotation with an invalid annotation_level", function() {
+    const ajv = new Ajv({ allErrors: true });
+    const v = ajv.compile(schema);
+    const pipeline = {
+      steps: [
+        { command: "echo hello" }
+      ],
+      notify: [
+        {
+          github_check: {
+            output: {
+              annotations: [
+                {
+                  path: "src/main.js",
+                  start_line: 1,
+                  end_line: 1,
+                  annotation_level: "critical",
+                  message: "bad level"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    };
+    expect(v(pipeline)).to.eql(false);
+  });
+
+  it("should reject a github_check annotation missing required fields", function() {
+    const ajv = new Ajv({ allErrors: true });
+    const v = ajv.compile(schema);
+    const pipeline = {
+      steps: [
+        { command: "echo hello" }
+      ],
+      notify: [
+        {
+          github_check: {
+            output: {
+              annotations: [
+                { path: "src/main.js" }
+              ]
+            }
+          }
+        }
+      ]
+    };
+    expect(v(pipeline)).to.eql(false);
+  });
+
+  it("should accept a valid github_check with if", function() {
+    const ajv = new Ajv({ allErrors: true });
+    const v = ajv.compile(schema);
+    const pipeline = {
+      steps: [
+        { command: "echo hello" }
+      ],
+      notify: [
+        {
+          github_check: { name: "My Check" },
+          if: "build.state == 'failed'"
+        }
+      ]
+    };
+    expect(v(pipeline)).to.eql(true);
+  });
+
   it("should verify groupStep.steps uses the same-ish items as root steps", function() {
     const mainList = schema.definitions.pipelineSteps.items.anyOf;
     const groupList = schema.definitions.groupSteps.items.anyOf;
