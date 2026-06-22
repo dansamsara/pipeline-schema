@@ -71,6 +71,8 @@ notify:
             end_column: 10
             annotation_level: "failure"
             message: "Undefined variable"
+            title: "Syntax error"
+            raw_details: "ReferenceError: foo is not defined"
   - github_check:
       name: "My Custom Check"
     if: "build.state == 'failed'"

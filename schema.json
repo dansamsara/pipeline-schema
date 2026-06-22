@@ -392,6 +392,14 @@
                       "message": {
                         "description": "The message for the annotation",
                         "type": "string"
+                      },
+                      "title": {
+                        "description": "The title for the annotation",
+                        "type": "string"
+                      },
+                      "raw_details": {
+                        "description": "Additional details for the annotation, displayed alongside the message",
+                        "type": "string"
                       }
                     },
                     "required": [
